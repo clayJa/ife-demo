@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ECharts NO.1</title>
+	<style>
+
+		#main{
+			width: 100%;
+			height: 400px;
+		}
+	</style>
+</head>
+<body>
+
+	<div id= "main"></div>
+<script src="http://echarts.baidu.com/dist/echarts.min.js"></script>
+<script src="http://echarts.baidu.com/vendors/jquery/jquery.min.js"></script>
+<script>
+    var getTemp = function(){
+
+    }
+    $(document).ready(function(){
+        var myChart = echarts.init(document.getElementById('main'));
+        	//Get temperature
+        	myChart.showLoading();
+            $.ajax({
+
+			    url: "http://jisutianqi.market.alicloudapi.com/weather/query?ip=" + "61.150.69.76",
+			    dateType: "json",
+			    headers: {
+			    	"Content-Type" :"application/json",
+			    	"Accept" :"application/json",
+			    	"Cache-Control": "no-cache",
+			    	"Authorization":"APPCODE 0939da37841c4606ab3fe1b446e15876"
+			    },
+			    success: function(data){
+			      //success return
+			      //24小时温度数据
+			      // data = JSON.parse(data);
+			      var need = data.result.hourly;
+			      var time = [],temp = [];
+			      for(var item in need){
+			      	time.push(need[item].time);
+			      	temp.push(parseInt( need[item].temp ) );
+			      }
+			      //最高温度 最低温度
+			      var max = Math.max.apply(Math,temp);
+			      var min = Math.min.apply(Math,temp);
+			      //配置参数
+		          var option = {
+		            title: {
+		                text: data.result.city + '未来24小时温度变化',
+		                left: 180
+		            },
+		            tooltip: {
+		            },
+		            legend: {
+		                data:['温度柱形图','温度折线图'],
+		                right: 150
+		            },
+		            xAxis: {
+		            	type: 'category',
+		                data: time,
+		            },
+		            yAxis: {
+		            	type: 'value',
+		                name: '温度/℃',
+		                min: 0,
+		                max: max,
+		                interval: (max - min)/5
+		            },
+		            series: [{
+		                name: '温度柱形图',
+		                type: 'bar',
+		                barWidth: 10,
+		                data: temp
+		            },
+		            {
+		                name: '温度折线图',
+		                type: 'line',
+		                data: temp
+		            }
+		            ]
+		        };	     
+			    // 使用刚指定的配置项和数据显示图表。
+			    myChart.hideLoading();
+		        myChart.setOption(option); 
+			    },
+			    error:function(xhr){
+						alert("糟糕： " + xhr.status + " " + xhr.statusText);
+			    }
+	        });
+   
+            //end of Ajax get temperature   
+           
+    });
+    //end of ready
+	    
+</script>
+</body>
+</html>
