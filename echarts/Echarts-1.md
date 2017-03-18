@@ -1,18 +1,18 @@
 # Echarts入门之柱状折线混合图
-###step 1：
+### step 1：
 创建容器
 ```html
 <div id= "main"></div>
 ```
-###step 2：
+### step 2：
 引入Echarts.js
 ```javascript
 <script src="http://echarts.baidu.com/vendors/jquery/jquery.min.js"></script>
 ```
-###step 3:
+### step 3:
 ajax获取未来24小时温度数据
 API：[天气查询](https://market.aliyun.com/products/57096001/cmapi011242.html)
-###step 4：
+### step 4：
 Echarts参数option配置
 ```javascript
  var option = {
@@ -56,7 +56,7 @@ Echarts参数option配置
     ]
 };
 ```
-###step 5
+### step 5
 生成
 ```javascript
 myChart.setOption(option);
