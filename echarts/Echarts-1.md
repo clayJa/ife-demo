@@ -1,4 +1,7 @@
 # Echarts入门之柱状折线混合图
+
+##Bug
+https 无法通过ajax请求http资源
 ### step 1：
 创建容器
 ```html
