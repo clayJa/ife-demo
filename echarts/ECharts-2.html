@@ -9,7 +9,6 @@
 		width: 600px;
 		height: 500px;
 		margin: 0 auto;
-		border: 1px blue solid;
 	}
 </style>
 <body>
@@ -21,7 +20,7 @@
 		var option = {
 			color: ["#33748A","#33B6E3"],
 			backgroundColor: "#D7E4EB",
-            title: {
+            title: [{
             	text: "What's  my credit score?",
             	textStyle: {
             		fontSize: 24
@@ -34,6 +33,25 @@
                 	fontSize: 21
                 }
             },
+            {
+			    text: 'Sources: World Bank;Census Bureau;EIU',
+			    bottom: 5,
+			    left: 52,
+			    textStyle: {
+			      fontSize: 18,
+			      fontWeight: "normal"
+			    }
+			},
+			{
+			    text: '  \n \n ',
+			    top: 0,
+			    left: 0,
+			    backgroundColor: "#F0494F",
+			    // textStyle: {
+			    //   color: "#F0494F",
+			    // }
+			}
+			],
             //提示框
             tooltip: {
             	trigger: 'axis'
