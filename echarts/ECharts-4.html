@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ECharts-3</title>
+</head>
+<style>
+	#main{
+		width: 1000px;
+		height: 580px;
+		margin: 0 auto;
+	}
+</style>
+<body>
+	<div id="main"></div>
+    <script src="../src/js/jquery.min.js"></script>
+	<script src="../src/js/echarts.min.js"></script>
+	<script>
+	    var myChart = echarts.init(document.getElementById('main'));
+		myChart.showLoading();
+        $.get("../echarts/data/data.json",function(data){
+        	var dataSrc = dataSolve(data);
+        	var option = {
+        		title: {
+			        text: 'Agilent Technologies 2009-08-24 ~ 2010-08-16 Stock Charts',
+			        left: "10%"
+			    },
+                tooltip: {
+		            trigger: 'axis',
+		            axisPointer: {
+		                type: 'line'  //坐标轴指示器
+		            }
+		        },
+		        dataZoom: [
+		            {
+		                type: 'inside', //内置在坐标系
+		                show: true,
+		                xAxisIndex: [0,1] ,// 表示这个 dataZoom 组件控制 第一个  xAxis
+		                start: 70,  //数据窗口范围的起始百分比
+		                end: 100    //数据窗口范围的结束百分比
+		            },
+		            {
+		                show: true,
+		                xAxisIndex: [0,1],
+		                type: 'slider',
+		                start: 70,
+		                end: 100,
+		                top: '85%'
+		            }
+		        ],
+		        //直角坐标系内绘图网格
+		        grid: [
+		            {
+		                left: '10%',
+		                right: '8%',
+		                height: '50%'
+		            },
+		            {
+		                left: '10%',
+		                right: '8%',
+		                top: '68%',
+		                height: '16%'
+		            }
+		        ],
+                xAxis: [{
+	            	type: "category",
+	            	data: dataSrc.date
+	            },
+	            {
+	                type: 'category',
+	                gridIndex: 1,
+	                axisLine: {onZero: false}, //是否显示坐标轴轴线。
+	                axisTick: {show: false},   //是否显示坐标轴刻度。
+	                splitLine: {show: false},  //是否显示分隔线
+	                axisLabel: {show: false},  //是否显示刻度标签。
+	                data: dataSrc.date
+	            }],
+        		yAxis: [{
+	                scale: true //是否是脱离 0 值比例。设置成 true 后坐标刻度不会强制包含零刻度
+	 
+	            },
+	            {
+	                scale: true,
+	                gridIndex: 1,
+	                axisLabel: {show: false},
+	                axisLine: {show: false},
+	                axisTick: {show: false},
+	                splitLine: {show: false}
+	            }
+	            ],
+	           
+        		series:[{
+        			type: "candlestick",
+        			name:  "Agilent Technologies",
+        			data: dataSrc.value,
+        			itemStyle: {
+	                    normal: {
+	                        color0: "#0F990F"
+	                    }
+	                }
+        		},
+        		{
+	                name: 'Volumn',
+	                type: 'bar',
+	                xAxisIndex: 1, //使用的 x 轴的 index
+	                yAxisIndex: 1,
+	                data: dataSrc.volume,
+                	
+	            }]
+        	}
+        	myChart.hideLoading();
+            myChart.setOption(option); 
+        });
+		
+
+		//数据处理
+		var dataSolve = function(data){
+			var date = [],value = [],volume = [],temp = [],i,len;
+			len = data.length;
+			for(i = 0;i < len;i++ ){
+				if(data[i]["Ticker"] === "A"){
+					date.push(data[i]["Date"].replace(/(\d{4})(\d{2})(\d{2})/,"$1-$2-$3"));
+					temp = [];
+					temp.push(parseFloat(data[i]["Open"]));
+					temp.push(parseFloat(data[i]["Close"]));
+					temp.push(parseFloat(data[i]["Low"]));
+					temp.push(parseFloat(data[i]["High"]));
+					value.push(temp);
+					volume.push(parseInt(data[i]["Volume"]));
+				}
+				else{
+					break;
+				}
+			}
+			return{
+				date: date,
+				value: value,
+				volume: volume
+			};
+		}
+	</script>
+</body>
+</html>
