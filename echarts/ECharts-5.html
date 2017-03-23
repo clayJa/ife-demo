@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ECharts-5</title>
+</head>
+<style>
+	#main{
+		width: 1000px;
+		height: 580px;
+		margin: 0 auto;
+	}
+</style>
+<body>
+	<div id="main"></div>
+    <script src="../src/js/jquery.min.js"></script>
+	<script src="../src/js/echarts.min.js"></script>
+	<script>
+	    var myChart = echarts.init(document.getElementById('main'));
+		myChart.showLoading();
+        $.get("../echarts/data/data.json",function(data){
+        	var dataSrc = dataSolve(data);
+        	var dateStart = dataSrc[0].splice(0,30);
+        	var valueStart = dataSrc[1].splice(0,30);
+        	var volumeStart = dataSrc[2].splice(0,30);
+        	var start = [dateStart,valueStart,volumeStart];
+        	var option = {
+        		title: {
+			        text: 'Agilent Technologies 2009-08-24 ~ 2010-08-16 Stock Charts',
+			        left: "10%"
+			    },
+                tooltip: {
+		            trigger: 'axis',
+		            axisPointer: {
+		                type: 'line'  //坐标轴指示器
+		            }
+		        },
+		        //直角坐标系内绘图网格
+		        grid: [
+		            {
+		                left: '10%',
+		                right: '8%',
+		                height: '50%'
+		            },
+		            {
+		                left: '10%',
+		                right: '8%',
+		                top: '68%',
+		                height: '16%'
+		            }
+		        ],
+                xAxis: [{
+	            	type: "category",
+	            	data: start[0]
+	            },
+	            {
+	                type: 'category',
+	                gridIndex: 1,
+	                axisLine: {onZero: false}, //是否显示坐标轴轴线。
+	                axisTick: {show: false},   //是否显示坐标轴刻度。
+	                splitLine: {show: false},  //是否显示分隔线
+	                axisLabel: {show: false},  //是否显示刻度标签。
+	                data: start[0]
+	            }],
+        		yAxis: [{
+	                scale: true //是否是脱离 0 值比例。设置成 true 后坐标刻度不会强制包含零刻度
+	 
+	            },
+	            {
+	                scale: true,
+	                gridIndex: 1,
+	                axisLabel: {show: false},
+	                axisLine: {show: false},
+	                axisTick: {show: false},
+	                splitLine: {show: false}
+	            }
+	            ],
+	           
+        		series:[{
+        			type: "candlestick",
+        			name:  "Agilent Technologies",
+        			data: start[1],
+        			itemStyle: {
+	                    normal: {
+	                        color0: "#0F990F"
+	                    }
+	                }
+        		},
+        		{
+	                name: 'Volumn',
+	                type: 'bar',
+	                xAxisIndex: 1, //使用的 x 轴的 index
+	                yAxisIndex: 1,
+	                data: start[2],
+                	
+	            }]
+        	}
+        	myChart.hideLoading();
+            myChart.setOption(option);
+            var id = setInterval(function () {
+			    if(dataSrc[0][0] === undefined){
+			    	window.clearInterval(id);
+			    }
+			    dataUpdate(dataSrc,start);
+			    myChart.setOption({
+			        xAxis: [{
+		            	data: start[0]
+		            },
+		            {
+		                data: start[0]
+		            }],
+			        series: [{
+	        			type: "candlestick",
+	        			data: start[1]
+	        		},
+	        		{
+		                name: 'Volumn',
+		                type: 'bar',
+		                xAxisIndex: 1, //使用的 x 轴的 index
+		                yAxisIndex: 1,
+		                data: start[2],
+	                	
+		            }]
+			    });
+			}, 200)
+            //////
+        });
+		
+
+		//数据处理
+		var dataSolve = function(data){
+			var date = [],value = [],volume = [],temp = [],i,len;
+			len = data.length;
+			for(i = 0;i < len;i++ ){
+				if(data[i]["Ticker"] === "A"){
+					date.push(data[i]["Date"].replace(/(\d{4})(\d{2})(\d{2})/,"$1-$2-$3"));
+					temp = [];
+					temp.push(parseFloat(data[i]["Open"]));
+					temp.push(parseFloat(data[i]["Close"]));
+					temp.push(parseFloat(data[i]["Low"]));
+					temp.push(parseFloat(data[i]["High"]));
+					value.push(temp);
+					volume.push(parseInt(data[i]["Volume"]));
+				}
+				else{
+					break;
+				}
+			}
+			return [date,value,volume];
+		}
+		//动态变化数据
+		var dataUpdate = function(data,start){
+			if(data[0][0] !== undefined){
+				for(var i = 0;i < 3;i++){
+				start[i].push(data[i].shift());
+				start[i].shift();
+			    }
+			}
+		}
+	</script>
+</body>
+</html>
