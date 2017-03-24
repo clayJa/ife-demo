@@ -21,13 +21,13 @@
 		myChart.showLoading();
         $.get("../echarts/data/graph.gexf",function(xml){
             var graph = echarts.dataTool.gexf.parse(xml); 
-            console.log(graph)
             //解析gexf文件返回一个对象
             var categories = [],color = [];
 		    graph.nodes.forEach(function (node) {
 		        if(color.indexOf(node.itemStyle.normal.color) == -1){
 		        	color.push(node.itemStyle.normal.color);
 		        }
+		        node.category = node.attributes.modularity_class;
 		    });
 		    for (var i = 0; i < 4; i++) {
 		        categories[i] = {
