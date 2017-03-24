@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ECharts-6</title>
+</head>
+<style>
+	#main{
+		width: 1000px;
+		height: 580px;
+		margin: 0 auto;
+	}
+</style>
+<body>
+	<div id="main"></div>
+    <script src="../src/js/jquery.min.js"></script>
+	<script src="../src/js/echarts.min.js"></script>
+	<script src="../src/js/dataTool.min.js"></script>
+	<script>
+	    var myChart = echarts.init(document.getElementById('main'));
+		myChart.showLoading();
+        $.get("../echarts/data/graph.gexf",function(xml){
+            var graph = echarts.dataTool.gexf.parse(xml); 
+            console.log(graph)
+            //解析gexf文件返回一个对象
+            var categories = [],color = [];
+		    graph.nodes.forEach(function (node) {
+		        if(color.indexOf(node.itemStyle.normal.color) == -1){
+		        	color.push(node.itemStyle.normal.color);
+		        }
+		    });
+		    for (var i = 0; i < 4; i++) {
+		        categories[i] = {
+		            name: 'Type: ' + i,
+		            itemStyle: {
+		            	normal: {
+		            		color: color[i]
+		            	}
+		            }
+		        };
+		    }
+            var option = {
+		        title: {
+		        	text: "Zachary's karate club",
+		        	left: "20%",
+		        	top: "1%",
+		        	zlevel: 1
+		        },
+		        tooltip: {},
+		        legend: [{
+		            data: categories.map(function (category) {
+		                return category.name;
+		            }),
+		            top: "2%",
+		            left: "45%",
+		            zlevel: 1
+		        }],
+		        series : [
+		            {
+		                name: "Zachary's karate club",
+		                type: 'graph',
+		                layout: 'none',
+		                data: graph.nodes,
+		                links: graph.links,
+		                roam: true,
+		                categories: categories,  //节点模块的类目
+		                //是否在鼠标移到节点上的时候突出显示节点以及节点的边和邻接节点。
+		                focusNodeAdjacency: true,
+		                //关系边的公用线条样式
+		                lineStyle: {
+		                    normal: {
+		                        color: 'source',
+		                        curveness: 0.28   //边的曲度，支持从 0 到 1 的值，值越大曲度越大。
+		                    }
+		                },
+		                animationDelay: function (idx) {
+						    // 越往后的数据延迟越大
+						    return idx * 50;
+						}
+						/*animationDurationUpdate: function (idx) {
+						    // 越往后的数据延迟越大
+						    return idx * 5  0;
+						}*/
+		            }
+		        ]
+		    };
+            myChart.hideLoading();
+            myChart.setOption(option); 
+        },"xml");
+		
+	</script>
+</body>
+</html>
