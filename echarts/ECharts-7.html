@@ -39,7 +39,7 @@
           }
         }*/
         $.get("../echarts/map/city.json",function(city){
-            myChart.hideLoading();
+            myChart.showLoading();
             var features = city["features"];
             for(var item in features){
                 cityData[features[item]["properties"]["name"]] = features[item]["geometry"]["coordinates"];
@@ -327,6 +327,7 @@
                                     }
                                 }]
                             }
+                        myChart.hideLoading();
                         myChart.setOption(option);
                         //动态变化，
                         var id = setInterval(function () {
