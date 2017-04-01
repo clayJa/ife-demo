@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>body</title>
+  <style>
+	  #select{
+	  	border: 1px rgb(221,221,221) solid;
+	  	width: 120px;
+	  	height: 20px;
+	  	text-align: center;
+	  }
+	  .selectNode{
+	  	position: relative;
+	  	left: -1px;
+	  	border: 1px rgb(221,221,221) solid;
+	  	width: 120px;
+	  	height: 20px;
+	  }
+	  .selectNode:hover{
+	  	background-color: rgb(221,221,221);
+	  	cursor: default;
+	  }
+	  .cursor {
+         animation: blink 1s infinite;
+         position: relative;
+         top: -2px;
+         left:-58px;
+      }
+		@keyframes blink {
+		    0%, 100% {
+		        color: black;
+		    }
+		    50% {
+		        color: white;
+		    }
+		}
+  </style>
+</head>
+<body>
+  <div id="select"></div>
+
+  <script>
+	function select(options){
+	  // your code here
+	  //获取节点
+	  var node = document.getElementById(options.srcNode.replace(/#/,""));
+	  //点击事件
+	  node.onclick = function(){
+	  	var cursor,span,selectNode,textNode,sNodeLen;
+	  	//删除子元素
+	  	while(node.hasChildNodes())
+		    {
+		        node.removeChild(node.firstChild);
+		    }
+		//光标
+	  	cursor = document.createTextNode("|"); 
+  		span = document.createElement("span"); 
+  		span.appendChild(cursor);
+        span.setAttribute("class", "cursor");  
+        node.appendChild(span);
+        //开始添加动态子元素并绑定事件
+        sNodeLen = document.getElementsByClassName("selectNode").length;
+	  	if (sNodeLen == 0) 
+	  	{
+	  		options.data.forEach(function(item){
+	  		textNode = document.createTextNode(item); 
+	  		selectNode = document.createElement("div"); 
+	  		selectNode.appendChild(textNode);
+            selectNode.setAttribute("class", "selectNode");  
+            node.appendChild(selectNode);
+            //绑定事件
+            selectNode.onclick = function(e){
+            	//阻止冒泡事件
+            	e.stopPropagation();
+            	while(node.hasChildNodes())
+			    {
+			        node.removeChild(node.firstChild);
+			    }
+                node.appendChild(document.createTextNode(this.firstChild.nodeValue));
+            } 
+	  	    });
+	  	}
+	  	
+	  };
+	}
+	
+	// eg
+	select({
+	  srcNode: '#select',
+	  data: ['北京','上海','杭州'],
+	  onChange: (ev)=>{
+	    console.log(ev.value); 
+	  }
+	})
+  </script>
+</body>
+</html>
